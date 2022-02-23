@@ -107,12 +107,28 @@ def main():
     album_artist  = arguments.get("Author Name", "")
     album_name    = arguments.get("Album Name", "")
 
-    # opening the CSV file
+    #Attempts to open csv file, if that fails, then reads song details as a string
     file_or_str = None
     try:
+        # opening the CSV file
         file_or_str = open(song_details, 'r')
     except:
+        #takes an input string and formats it for csv reader use if not in that form
         file_or_str = song_details.strip().split("\n")
+        up_slash_present = re.compile(r"\A\d\d?:\d\d?(:\d\d?)?\s?\|")
+        isolate_numbers = re.compile(r"\A\d\d?:\d\d?(:\d\d?)?")
+        for i in range(len(file_or_str)):
+            line = file_or_str[i]
+            if (re.search(up_slash_present, line) is None):
+                time_stamp = re.search(isolate_numbers, line)
+                if time_stamp is None:
+                    print("error, invalid line: " + line)
+                    exit(1)
+                else:
+                    other_half = re.split(isolate_numbers, line)[-1]
+                    time_stamp = time_stamp.group()
+                    file_or_str[i] = time_stamp + "|" + other_half.strip()
+                    
     fp = csv.reader(file_or_str, delimiter='|')
 
     song_list = []
