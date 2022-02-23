@@ -30,7 +30,7 @@ def get_end_of_mp3(mp3_file):
                 matches = re.findall("[0-9][0-9]:[0-9][0-9]:[0-9][0-9].[0-9][0-9]", line)
                 #last match is the end time
                 os.remove(path_to_temp)
-                if len(m) > 0:
+                if len(matches) > 0:
                     return matches[-1]
                 else:
                     #should never hit this else
@@ -64,6 +64,11 @@ def processDoubleDash():
         if "--" in arg:
             if arg == "--help":
                 print ("Arguments are \"song details\", \"big .mp3 file\"")
+                print ("Song details can either be a file, or a string of timestamp seperations")
+                print ("Optional flags:")
+                print ("-aa {name}       sets the author name")
+                print ("-al {name}       sets the album name")
+
                 exit(0)
 def processDash():
     #processes required data
@@ -82,7 +87,7 @@ def processDash():
             if skipNext:
                 skipNext = False
                 continue
-            if "-" is sys.argv[i][0]:
+            if "-" == sys.argv[i][0]:
                 if sys.argv[i] == "-aa":
                     termsToValues["Author Name"] = sys.argv[i+1]
                     skipNext = True
@@ -103,7 +108,12 @@ def main():
     album_name    = arguments.get("Album Name", "")
 
     # opening the CSV file
-    fp = csv.reader(open(song_details, 'r'), delimiter='|')
+    file_or_str = None
+    try:
+        file_or_str = open(song_details, 'r')
+    except:
+        file_or_str = song_details.strip().split("\n")
+    fp = csv.reader(file_or_str, delimiter='|')
 
     song_list = []
 
