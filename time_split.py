@@ -71,6 +71,13 @@ def processDoubleDash():
 
                 exit(0)
 def processDash():
+    #Replaces backslashes that cancal spaces with spaces and adds to previous
+    i = 0
+    while i < len(sys.argv):
+        if (sys.argv[i][-1] == "\\"): #is only actually one backslash
+            sys.argv[i] = sys.argv[i] + sys.argv.pop(i + 1)
+        else:
+            i += 1
     #processes required data
     termsToValues = None
     try:
@@ -115,8 +122,9 @@ def main():
     except:
         #takes an input string and formats it for csv reader use if not in that form
         file_or_str = song_details.strip().split("\n")
-        up_slash_present = re.compile(r"\A\d\d?:\d\d?(:\d\d?)?\s?\|")
-        isolate_numbers = re.compile(r"\A\d\d?:\d\d?(:\d\d?)?")
+        up_slash_present = re.compile(r"\A\d\d?:\d\d?(?::\d\d?)?\s?\|")
+        isolate_numbers = re.compile(r"\A\d\d?:\d\d?(?::\d\d?)?")
+        
         for i in range(len(file_or_str)):
             line = file_or_str[i]
             if (re.search(up_slash_present, line) is None):
@@ -167,7 +175,7 @@ def main():
     song_list.append([time_start, time_end, track_id, song_name])
     # creating all the songs
     for row in song_list:
-        make_songs(main_mp3_file, row[0], row[1], row[2], row[3], album_artist, album_name)
+        #make_songs(main_mp3_file, row[0], row[1], row[2], row[3], album_artist, album_name)
 
         print("[INFO] Song name {} created".format(row[3]))
 
