@@ -56,8 +56,8 @@ def make_songs(main_song_file, start_time, end_time, song_track_id, song_name, s
             "-metadata album=\"%s\" "
             "-metadata track=\"%s\" "
             "-ss %s "
-            "-to %s \"%s.mp3\"") % (main_song_file, song_name, song_artist, song_album, meta_track_id, start_time, end_time, song_file_name)
-
+            "-to %s \"%s.mp3\"") % (main_song_file.replace(" ", "\\ "), song_name, song_artist, song_album, meta_track_id, start_time, end_time, song_file_name)
+    print(str_cmd)
     sp.call(str_cmd, shell = True)
 def processDoubleDash():
     for arg in sys.argv:
@@ -71,13 +71,6 @@ def processDoubleDash():
 
                 exit(0)
 def processDash():
-    #Replaces backslashes that cancal spaces with spaces and adds to previous
-    i = 0
-    while i < len(sys.argv):
-        if (sys.argv[i][-1] == "\\"): #is only actually one backslash
-            sys.argv[i] = sys.argv[i] + sys.argv.pop(i + 1)
-        else:
-            i += 1
     #processes required data
     termsToValues = None
     try:
@@ -107,13 +100,23 @@ def processDash():
         exit(-2)
     return termsToValues
 def main():
+    i = 0
+    while i < len(sys.argv):
+        if (sys.argv[i][-1] == "\\"): #is only actually one backslash
+            sys.argv[i] = sys.argv[i] + sys.argv.pop(i + 1)
+        else:
+            i += 1
     processDoubleDash()
     arguments = processDash()
     song_details = arguments["Song Details"]
     main_mp3_file = arguments["MP3"]
     album_artist  = arguments.get("Author Name", "")
     album_name    = arguments.get("Album Name", "")
-
+    #checks that mp3 file is a file
+    if (not os.path.isfile(main_mp3_file)):
+        print("Not a File!")
+        print(main_mp3_file)
+        exit(1)
     #Attempts to open csv file, if that fails, then reads song details as a string
     file_or_str = None
     try:
