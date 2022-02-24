@@ -175,7 +175,7 @@ def main():
     song_list.append([time_start, time_end, track_id, song_name])
     # creating all the songs
     for row in song_list:
-        #make_songs(main_mp3_file, row[0], row[1], row[2], row[3], album_artist, album_name)
+        make_songs(main_mp3_file, row[0], row[1], row[2], row[3], album_artist, album_name)
 
         print("[INFO] Song name {} created".format(row[3]))
 
